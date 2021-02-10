@@ -1,0 +1,366 @@
+﻿@page
+@model MovieLibraryAPI.Pages.IndexModel
+@{
+}
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>Movies</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <link rel="icon" type="image/x-icon" href="~/favicon.ico">
+    <style>
+        #movies {
+            font-family: Arial, Helvetica, sans-serif;
+            border-collapse: collapse;
+            width: 100%;
+        }
+
+            #movies td, #movies th {
+                border: 1px solid #ddd;
+                padding: 8px;
+            }
+
+            #movies tr:nth-child(even) {
+                background-color: #f2f2f2;
+            }
+
+            #movies tr:hover {
+                background-color: #ddd;
+            }
+
+            #movies th {
+                padding-top: 12px;
+                padding-bottom: 12px;
+                text-align: left;
+                background-color: #4CAF50;
+                color: white;
+            }
+    </style>
+</head>
+
+<body style="background-color:silver;">
+    <div>
+        <!-- Navigation bar code -->
+        <nav class="navbar navbar-expand-lg navbar-dark bg-info">
+            <a class="navbar-brand" href="#">Movies</a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarText" aria-controls="navbarText" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarText">
+                <ul class="navbar-nav mr-auto">
+                    <li class="nav-item active">
+                        <button class="btn btn-outline-dark" onclick="getadd_Movies()" data-toggle="modal" data-target="#addMovies">Add New Movie</button>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+
+        <!-- following division is creating main area of the web page where all movies data will display -->
+        <div class="container">
+            <div class="row" id="allMovies">
+            </div>
+        </div>
+    </div>
+
+    <!-- below mentioned code will create the template to add a new Movie -->
+    <div class="modal" tabindex="-1" role="dialog" id="addMovies">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Add Movies</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form>
+                        <div class="form-group">
+                            <label for="title">Title</label>
+                            <input type="text" class="form-control" id="title" aria-describedby="titleHelp" placeholder="Title">
+                        </div>
+                        <div class="form-group">
+                            <label for="director">Director</label>
+                            <input type="text" class="form-control" id="director" aria-describedby="directorHelp" placeholder="Director">
+                        </div>
+                        <div class="form-group">
+                            <label for="summary">Summary</label>
+                            <textarea rows="6" cols="40" class="form-control" id="summary" aria-describedby="summaryHelp" placeholder="Summary"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="language">Language</label>
+                            <select class="form-control" id="language" aria-describedby="languageHelp"></select>
+                        </div>
+                        <div class="form-group">
+                            <input type="radio" aria-describedby="drama_Help" name="genre" value="Drama">
+                            <label for="drama">Drama</label>
+                            <input type="radio" aria-describedby="comedy_Help" name="genre" value="Comedy">
+                            <label for="comedy">Comedy</label>
+                            <input type="radio" aria-describedby="thriller_Help" name="genre" value="Thriller">
+                            <label for="thriller">Thriller</label>
+                            <input type="radio" aria-describedby="romance_Help" name="genre" value="Romance">
+                            <label for="romance">Romance</label>
+                            <input type="radio" aria-describedby="adventure_Help" name="genre" value="Adventure">
+                            <label for="adventure">Adventure</label>
+                        </div>
+
+                        <div class="form-group" id="result">
+
+                        </div>
+                        <button type="button" class="btn btn-primary" onclick="addMovies()">Add Movies</button>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal" tabindex="-1" role="dialog" id="update_Movies">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Update Movies</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form>
+                        <div class="form-group">
+
+                            <input type="hidden" class="form-control" id="_id" aria-describedby="IdHelp">
+
+                        </div>
+                        <div class="form-group">
+                            <label for="update_title">Title</label>
+                            <input type="text" class="form-control" id="update_title" aria-describedby="update_titleHelp" placeholder="Title">
+                        </div>
+                        <div class="form-group">
+                            <label for="update_director">Director</label>
+                            <input type="text" class="form-control" id="update_director" aria-describedby="update_director" placeholder="Director">
+                        </div>
+                        <div class="form-group">
+                            <label for="update_summary">Summary</label>
+                            <textarea rows="6" cols="40" class="form-control" id="update_summary" aria-describedby="update_summaryHelp" placeholder="Summary"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="update_language">Language</label>
+                            <select class="form-control" id="update_language" aria-describedby="update_languageHelp"></select>
+                        </div>
+                        <div class="form-group">
+                            <input type="radio" aria-describedby="drama_Help" name="update_genre" value="Drama">
+                            <label for="drama">Drama</label>
+                            <input type="radio" aria-describedby="comedy_Help" name="update_genre" value="Comedy">
+                            <label for="comedy">Comedy</label>
+                            <input type="radio" aria-describedby="thriller_Help" name="update_genre" value="Thriller">
+                            <label for="thriller">Thriller</label>
+                            <input type="radio" aria-describedby="romance_Help" name="update_genre" value="Romance">
+                            <label for="romance">Romance</label>
+                            <input type="radio" aria-describedby="adventure_Help" name="update_genre" value="Adventure">
+                            <label for="adventure">Adventure</label>
+                        </div>
+
+                        <div class="form-group" id="update_result">
+
+                        </div>
+                        <button type="button" class="btn btn-primary" onclick="updateMovies()">Update Movies</button>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <! -- java script files that will help to link the front end and back end -->
+    <script src="https://ajax.aspnetcdn.com/ajax/jQuery/jquery-2.0.3.min.js"></script>
+    <script src="https://ajax.aspnetcdn.com/ajax/jquery.templates/beta1/jquery.tmpl.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+
+    <script>
+        var uri = 'api/Movies';
+        var uriLanguages = 'api/Languages';
+
+        $(document).ready(function () {
+            // Gets all Movies
+            $.getJSON(uri)
+                .done(function (data) {
+                    console.log("success in getting movies");
+                    console.log(data);
+                    $("#MoviesTemplate").tmpl(data).appendTo("#allMovies");
+                });
+        });
+
+        function getAllMovies() {
+            $.getJSON(uri)
+                .done(function (data) {
+                    console.log("Updating Movie List");
+                    $("#allMovies").text("");
+                    $("#MoviesTemplate").tmpl(data).appendTo("#allMovies");
+                });
+        }
+
+        //funtion to fill the data into add template
+        function getadd_Movies() {
+            $.ajax({
+                type: "GET",
+                url: uriLanguages,
+                contentType: "application/json"
+            }).done(function (data) {
+                console.log(data);
+                $('#title').val('');
+                $('#director').val('');
+                $('#summary').val('');
+                $("input[name=genre][value='Drama']").prop('checked', true);
+                $("#result").html("");
+                var languageDDL = $("#language");
+                languageDDL.empty();
+                languageDDL.append($('<option/>', { value: 0, text: '--Select Language--' }))
+                $(data).each(function (index, item) {
+                    languageDDL.append($('<option/>', { value: item.id, text: item.name }));
+                });
+            });
+        }
+
+        function addMovies() {
+            var _title = $('#title').val();
+            var _director = $('#director').val();
+            var _summary = $('#summary').val();
+            var _language = $('#language').val();
+            var _genre = $("input[name='genre']:checked").val();
+            var Movie = {
+                title: _title,
+                director: _director,
+                summary: _summary,
+                languageId: parseInt(_language),
+                genre: _genre
+            };
+            console.log(Movie);
+            console.log(JSON.stringify(Movie));
+            $.ajax({
+                type: "POST",
+                url: uri,
+                data: JSON.stringify(Movie),
+                contentType: "application/json; charset=utf-8",
+                dataType: 'json',
+            }).done(function (response) {
+                $("#result").html("Success");
+                $('#title').val('');
+                $('#director').val('');
+                $('#summary').val('');
+                $("input[name=genre][value='Drama']").prop('checked', true);
+                getAllMovies();
+            }).fail(function (jqXHR, textStatus) {
+                $("#result").html("An error occured when Adding the movie record.");
+            });
+        }
+
+        //funtion to fill the data into update template
+        function getupdate_Movies(id) {
+            $.ajax({
+                type: "GET",
+                url: uriLanguages,
+                contentType: "application/json"
+            }).done(function (data) {
+                console.log(data);
+                var languageDDL = $("#update_language");
+                languageDDL.empty();
+                languageDDL.append($('<option/>', { value: 0, text: '--Select Language--' }))
+                $(data).each(function (index, item) {
+                    languageDDL.append($('<option/>', { value: item.id, text: item.name }));
+                });
+                $.ajax({
+                    type: "GET",
+                    url: uri + "/" + id,
+                    contentType: "application/json"
+                }).done(function (response) {
+                    $('#_id').val(response.id);
+                    $('#update_title').val(response.title);
+                    $('#update_director').val(response.director);
+                    $('#update_summary').val(response.summary);
+                    $("#update_language").val(response.languageId)
+                    $("input[name=update_genre][value=" + response.genre + "]").prop('checked', true);
+                });
+            });
+
+        }
+
+        // function to update data of the Movie
+        function updateMovies() {
+            var _title = $('#update_title').val();
+            var _director = $('#update_director').val();
+            var _summary = $('#update_summary').val();
+            var _language = $('#update_language').val();
+            var _genre = $("input[name='update_genre']:checked").val();
+            var updateMovies = {
+                id: parseInt($('#_id').val()),
+                title: _title,
+                director: _director,
+                summary: _summary,
+                languageId: parseInt(_language),
+                genre: _genre
+            };
+            console.log(updateMovies);
+            console.log(JSON.stringify(updateMovies));
+            $.ajax({
+                type: "PUT",
+                url: uri + "/" + $('#_id').val(),
+                data: JSON.stringify(updateMovies),
+                contentType: "application/json; charset=utf-8",
+                dataType: 'json',
+            }).done(function (response) {
+                $("#update_result").html("Success");
+                getAllMovies();
+            }).fail(function (jqXHR, textStatus) {
+                $("#update_result").html("An error occured when Adding the Movie record.");
+            });
+        }
+
+        //funtion to delete a particular Movie based on id
+
+        function remove(id) {
+            var yes = confirm("Are you sure you want to delete this Movie?");
+            if (yes) {
+                $.ajax({
+                    type: "DELETE",
+                    url: uri + "/" + id,
+                }).done(function (response) {
+                    getAllMovies();
+                });
+            }
+        }
+
+    </script>
+
+    <script id="MoviesTemplate" type="text/x-jquery-tmpl">
+
+        <div class="card card text-black bg-secondary border-warning mb-3" style="width: 60%;">
+            <table id="movies">
+                <tr>
+                    <th>Title: ${title}</th>
+                </tr>
+                <tr>
+                    <td>Director: ${director}</td>
+                </tr>
+                <tr>
+                    <td>Summary :  ${summary}</td>
+                </tr>
+                <tr>
+                    <td>Language : ${language}</td>
+                </tr>
+                <tr>
+                    <td>Genre : ${genre}</td>
+                </tr>
+            </table>
+            <span>
+                <button class="btn btn-outline-warning" onclick="getupdate_Movies('${id}')" data-toggle="modal" data-target="#update_Movies">Update</button>
+                <a href="#" class="btn btn-danger" onclick="remove('${id}')">Delete</a>
+            </span>
+        </div>
+
+    </script>
+</body>
+</html>
